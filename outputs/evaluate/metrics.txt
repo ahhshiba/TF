@@ -1,0 +1,15 @@
+mAP50: 0.8374
+mAP50-95: 0.6314
+Precision: 0.8898
+Recall: 0.7779
+
+Per-class mAP50:
+  bird: 0.7389
+  boar: 0.8865
+  cat: 0.6443
+  deer: 0.6764
+  dog: 0.8026
+  opossum: 0.6412
+  raccoon: 0.3684
+  skunk: 0.3764
+  squirrel: 0.5481

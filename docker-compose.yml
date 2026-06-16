@@ -1,0 +1,42 @@
+services:
+  train:
+    build: .
+    image: road-animal-detector:cpu
+    volumes:
+      - .:/workspace
+    command: python3 scripts/train.py
+    environment:
+      EPOCHS: 50
+      IMG_SIZE: 416
+      BATCH: 8
+
+  evaluate:
+    image: road-animal-detector:cpu
+    volumes:
+      - .:/workspace
+    command: python3 scripts/evaluate.py
+    environment:
+      IMG_SIZE: 416
+
+  # Runs detection on a handful of test images (good for the "2-3 examples" demo slide).
+  demo-images:
+    image: road-animal-detector:cpu
+    volumes:
+      - .:/workspace
+    command: python3 scripts/detect.py --source test/images --output outputs/demo_images --conf 0.4 --limit 5
+
+  # Put your own road video at demo_input/road_video.mp4 first.
+  demo-video:
+    image: road-animal-detector:cpu
+    volumes:
+      - .:/workspace
+    command: python3 scripts/detect.py --source demo_input/road_video.mp4 --output outputs/demo_video/output.mp4 --conf 0.4
+
+  dashboard:
+    build: .
+    image: road-animal-detector:cpu
+    volumes:
+      - .:/workspace
+    ports:
+      - "3000:3000"
+    command: python3 scripts/app.py

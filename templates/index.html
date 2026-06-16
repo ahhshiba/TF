@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Detector Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --container-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .upload-section {
+            border: 2px dashed #475569;
+            border-radius: 8px;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-section:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            padding: 12px 24px;
+            cursor: pointer;
+            background-color: #475569;
+            color: white;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #334155;
+        }
+
+        .submit-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #334155;
+        }
+
+        .result-title {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .media-container {
+            max-width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            background-color: #000;
+        }
+
+        video, img {
+            max-width: 100%;
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--accent-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Animal Detector AI</h1>
+    </header>
+
+    <div class="container">
+        <h2>Test the Model</h2>
+        <p>Upload a road video or image to detect animals (dogs, cats, deer, etc.)</p>
+
+        <form action="/" method="post" enctype="multipart/form-data" id="uploadForm">
+            <div class="upload-section">
+                <label for="file-upload" class="custom-file-upload">
+                    Choose File (Image or Video)
+                </label>
+                <input id="file-upload" type="file" name="file" accept="image/*,video/*" required onchange="updateFileName(this)"/>
+                <div id="file-name" style="margin-bottom: 15px; color: #cbd5e1;">No file chosen</div>
+                <button type="submit" class="submit-btn" onclick="showLoading()">Analyze Media</button>
+            </div>
+            
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                Analyzing... this might take a minute for videos.
+            </div>
+        </form>
+
+        <div class="test-block" style="margin-top: 30px; padding: 25px; border: 1px solid #475569; border-radius: 8px; background-color: #1e293b;">
+            <h3 style="margin-top: 0; color: #f8fafc;">Test with Real-World Sample</h3>
+            <p style="color: #cbd5e1; margin-bottom: 20px;">Run the AI model on an open-source GitHub video of an animal crossing the road.</p>
+            <form action="/test_sample" method="post" onsubmit="showSampleLoading()">
+                <button type="submit" class="submit-btn" style="background-color: #10b981;">Testing (GitHub Video)</button>
+            </form>
+            <div class="loading" id="sampleLoadingIndicator" style="display: none; margin-top: 20px; color: #10b981; font-weight: bold;">
+                <div class="spinner" style="border-left-color: #10b981;"></div>
+                Processing sample video... please wait.
+            </div>
+        </div>
+
+        {% if video_url %}
+        <div class="result-section">
+            <h3 class="result-title">Analysis Complete</h3>
+            <div class="media-container">
+                <video controls autoplay loop>
+                    <source src="{{ video_url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+        {% elif image_url %}
+        <div class="result-section">
+            <h3 class="result-title">Analysis Complete</h3>
+            <div class="media-container">
+                <img src="{{ image_url }}" alt="Detection Result">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function updateFileName(input) {
+            const fileNameDisplay = document.getElementById('file-name');
+            if (input.files && input.files.length > 0) {
+                fileNameDisplay.textContent = 'Selected: ' + input.files[0].name;
+            } else {
+                fileNameDisplay.textContent = 'No file chosen';
+            }
+        }
+
+        function showLoading() {
+            const fileInput = document.getElementById('file-upload');
+            if (fileInput.files.length > 0) {
+                document.getElementById('loadingIndicator').style.display = 'block';
+            }
+        }
+
+        function showSampleLoading() {
+            document.getElementById('sampleLoadingIndicator').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

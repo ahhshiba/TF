@@ -1,0 +1,14 @@
+path: /workspace
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 9
+names: ['bird', 'boar', 'cat', 'deer', 'dog', 'opossum', 'raccoon', 'skunk', 'squirrel']
+
+roboflow:
+  workspace: luiss-workspace-5nu6i
+  project: road-animals-0g2qd
+  version: dataset
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/luiss-workspace-5nu6i/road-animals-0g2qd/dataset/dataset

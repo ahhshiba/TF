@@ -1,0 +1,6 @@
+Place a road/dashcam video here named "road_video.mp4" to run the demo-video
+docker-compose service:
+
+  docker compose run --rm demo-video
+
+Output will be written to outputs/demo_video/output.mp4
